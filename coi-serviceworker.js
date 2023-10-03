@@ -1,13 +1,16 @@
 /*! coi-serviceworker v0.1.7 - Guido Zuidhof and contributors, licensed under MIT */
 let coepCredentialless = false;
 if (typeof window === 'undefined') {
+    console.log("typeof window is undefined")
     self.addEventListener("install", () => self.skipWaiting());
     self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
 
     self.addEventListener("message", (ev) => {
         if (!ev.data) {
+            console.log("ev.data")
             return;
         } else if (ev.data.type === "deregister") {
+            console.log("deregister")
             self.registration
                 .unregister()
                 .then(() => {
@@ -17,6 +20,7 @@ if (typeof window === 'undefined') {
                     clients.forEach((client) => client.navigate(client.url));
                 });
         } else if (ev.data.type === "coepCredentialless") {
+            console.log("coepCredentialless")
             coepCredentialless = ev.data.value;
         }
     });
@@ -69,16 +73,18 @@ if (typeof window === 'undefined') {
             quiet: false,
             ...window.coi
         };
-
+        console.log("else block")
         const n = navigator;
 
         if (n.serviceWorker && n.serviceWorker.controller) {
             n.serviceWorker.controller.postMessage({
+                console.log("else block::coepCredentialless")
                 type: "coepCredentialless",
                 value: coi.coepCredentialless(),
             });
 
             if (coi.shouldDeregister()) {
+                console.log("else block::deregister")
                 n.serviceWorker.controller.postMessage({ type: "deregister" });
             }
         }
@@ -88,12 +94,14 @@ if (typeof window === 'undefined') {
         if (window.crossOriginIsolated !== false || !coi.shouldRegister()) return;
 
         if (!window.isSecureContext) {
+            console.log("else block::isSecureContext")
             !coi.quiet && console.log("COOP/COEP Service Worker not registered, a secure context is required.");
             return;
         }
 
         // In some environments (e.g. Chrome incognito mode) this won't be available
         if (n.serviceWorker) {
+            console.log("else block::serviceworker")
             n.serviceWorker.register(window.document.currentScript.src).then(
                 (registration) => {
                     !coi.quiet && console.log("COOP/COEP Service Worker registered", registration.scope);
