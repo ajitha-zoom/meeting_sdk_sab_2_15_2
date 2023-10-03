@@ -78,7 +78,6 @@ if (typeof window === 'undefined') {
 
         if (n.serviceWorker && n.serviceWorker.controller) {
             n.serviceWorker.controller.postMessage({
-                console.log("else block::coepCredentialless")
                 type: "coepCredentialless",
                 value: coi.coepCredentialless(),
             });
